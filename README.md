@@ -1,4 +1,4 @@
 ## wstcproxy
 
-`WebSockets ==> TCP` Proxy  
+`WebSockets <==> TCP` Proxy  
 > :warning: **WARN:**: This is not the production version
