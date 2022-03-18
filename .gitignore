@@ -1,0 +1,7 @@
+.vscode/*
+.history/
+
+main
+wstcproxy
+
+go.work
