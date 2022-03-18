@@ -4,14 +4,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"wstcproxy/helper"
 
 	"github.com/gorilla/websocket"
 )
-
-type Message struct {
-	ID   string
-	Data string
-}
 
 func readTcpBytes(conn net.Conn) ([]byte, error) {
 	buf := make([]byte, 1024)
@@ -33,16 +29,15 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer wsconn.Close()
 
-	// TODO: parse ip with port
-	dsthost := r.URL.Query().Get("dstip")
-	// if net.ParseIP(dstip) == nil {
-	// 	wsconn.Close() // TODO: send msg with err
-	// 	return
-	// }127.0.0.1:8010
+	hostport := r.URL.Query().Get("dest_host")
+	if _, _, err = helper.SepIPPort(hostport); err != nil {
+		wsconn.Close()
+		return
+	}
 
-	tcpconn, err := net.Dial("tcp", dsthost)
+	tcpconn, err := net.Dial("tcp", hostport)
 	if err != nil {
-		wsconn.Close() // TODO: send msg with err
+		wsconn.Close()
 		return
 	}
 
@@ -56,11 +51,9 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		tcpconn.Write(wsmsg)
 
 		data, err := readTcpBytes(tcpconn)
-		log.Println("data:", string(data))
 
 		err = wsconn.WriteMessage(websocket.BinaryMessage, data)
 		if err != nil {
-			log.Println("write:", err)
 			break
 		}
 	}

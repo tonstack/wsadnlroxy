@@ -3,41 +3,60 @@ package config
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
-
 	"wstcproxy/helper"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type MainConfig struct {
-	Host string
+	IP   string
 	Port string
 }
 
 var CFG MainConfig
 
 func Configure() {
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
+
 	var hostport string
 
 	flag.Usage = func() {
 		fmt.Print(
 			"Usage of wstcproxy:\n\n",
-			"--host\tstring\n",
-			"\tThe host:port on which the server will be up.\n",
-			"\tExample: 127.0.0.1:3000\n",
+
+			"--host\tstring\t(required)\n",
+			"\tThe host:port on which the server \n",
+			"\twill be up. Example: 127.0.0.1:3000\n\n",
+
+			"--debug\tbool\t(optional)\n",
+			"\tActivates debug mode. Don't \n",
+			"\tuse this flag in production.\n",
 		)
 		os.Exit(1)
 	}
 
-	hostHelp := "The host:port on which the server will be up. Example: 127.0.0.1:3000"
-	flag.StringVar(&hostport, "host", "", hostHelp)
+	isDebug := flag.Bool("debug", false, "")
+	flag.StringVar(&hostport, "host", "", "")
 	flag.Parse()
 
+	if *isDebug {
+		log.SetLevel(log.DebugLevel)
+	}
 	if hostport == "" {
 		flag.Usage()
 	}
 
-	if err := helper.SepIPPort(hostport, &CFG.Host, &CFG.Port); err != nil {
+	var err error
+
+	CFG.IP, CFG.Port, err = helper.SepIPPort(hostport)
+	if err != nil {
 		log.Fatalln(err.Error())
 	}
 }

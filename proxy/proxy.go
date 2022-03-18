@@ -20,7 +20,7 @@ var upgrader = websocket.Upgrader{
 func RunServer() {
 	http.HandleFunc("/", mainHandler)
 
-	hostportString := fmt.Sprintf("%s:%s", config.CFG.Host, config.CFG.Port)
+	hostportString := fmt.Sprintf("%s:%s", config.CFG.IP, config.CFG.Port)
 	log.Println("Starting server on:", hostportString)
 
 	log.Fatal(http.ListenAndServe(hostportString, nil))
