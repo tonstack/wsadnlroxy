@@ -4,14 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 	"wstcproxy/helper"
 
 	"github.com/sirupsen/logrus"
 )
 
 type MainConfig struct {
-	IP   string
-	Port string
+	IP           string
+	Port         string
+	ConnDeadline time.Duration
 }
 
 var CFG MainConfig
@@ -59,4 +61,6 @@ func Configure() {
 	if err != nil {
 		logrus.Fatal(err.Error())
 	}
+
+	CFG.ConnDeadline = 10 * time.Second
 }
