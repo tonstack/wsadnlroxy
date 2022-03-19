@@ -1,12 +1,12 @@
 package proxy
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"wstcproxy/helper"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 func readTcpBytes(conn net.Conn) ([]byte, error) {
@@ -20,10 +20,44 @@ func readTcpBytes(conn net.Conn) ([]byte, error) {
 	return buf[:size], nil
 }
 
+func chanFromWSConn(wsconn *websocket.Conn) chan []byte {
+	wsc := make(chan []byte)
+
+	go func() {
+		for {
+			_, wsmsg, err := wsconn.ReadMessage()
+			if err != nil {
+				wsc <- nil
+				break
+			}
+			wsc <- wsmsg
+		}
+	}()
+
+	return wsc
+}
+
+func chanFromTCPConn(tcpconn net.Conn) chan []byte {
+	tcpc := make(chan []byte)
+
+	go func() {
+		for {
+			tcpmsg, err := readTcpBytes(tcpconn)
+			if err != nil {
+				tcpc <- nil
+				break
+			}
+			tcpc <- tcpmsg
+		}
+	}()
+
+	return tcpc
+}
+
 func mainHandler(w http.ResponseWriter, r *http.Request) {
+
 	wsconn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("upgrade:", err)
 		return
 	}
 
@@ -41,20 +75,28 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tcpChan := chanFromTCPConn(tcpconn)
+	wsChan := chanFromWSConn(wsconn)
+
 	for {
-		_, wsmsg, err := wsconn.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
+		select {
+		case wsMsg := <-wsChan:
+			if wsMsg == nil {
+				return // connection closed
+			}
+			logrus.Debug("wsMsg case: " + string(wsMsg))
+			tcpconn.Write(wsMsg)
 
-		tcpconn.Write(wsmsg)
-
-		data, err := readTcpBytes(tcpconn)
-
-		err = wsconn.WriteMessage(websocket.BinaryMessage, data)
-		if err != nil {
-			break
+		case tcpMsg := <-tcpChan:
+			if tcpMsg == nil {
+				return // connection closed
+			}
+			logrus.Debug("tcpMsg case: " + string(tcpMsg))
+			if err := wsconn.WriteMessage(
+				websocket.BinaryMessage, tcpMsg,
+			); err != nil {
+				break
+			}
 		}
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 	"wstcproxy/helper"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type MainConfig struct {
@@ -17,13 +17,13 @@ type MainConfig struct {
 var CFG MainConfig
 
 func Configure() {
-	log.SetFormatter(&log.TextFormatter{
+	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.InfoLevel)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.InfoLevel)
 
 	var hostport string
 
@@ -47,7 +47,7 @@ func Configure() {
 	flag.Parse()
 
 	if *isDebug {
-		log.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 	if hostport == "" {
 		flag.Usage()
@@ -57,6 +57,6 @@ func Configure() {
 
 	CFG.IP, CFG.Port, err = helper.SepIPPort(hostport)
 	if err != nil {
-		log.Fatalln(err.Error())
+		logrus.Fatal(err.Error())
 	}
 }
