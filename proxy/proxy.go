@@ -2,26 +2,25 @@ package proxy
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"time"
 	"wstcproxy/config"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin:      func(r *http.Request) bool { return true },
-	ReadBufferSize:   1024,
-	WriteBufferSize:  1024,
-	HandshakeTimeout: 1 * time.Second,
+	ReadBufferSize:   config.CFG.WSReadBufferSize,
+	WriteBufferSize:  config.CFG.WSWriteBufferSize,
+	HandshakeTimeout: config.CFG.WSHandshakeTimeout,
 }
 
 func RunServer() {
 	http.HandleFunc("/", mainHandler)
 
 	hostportString := fmt.Sprintf("%s:%s", config.CFG.IP, config.CFG.Port)
-	log.Println("Starting server on:", hostportString)
+	logrus.Info("Starting server on:", hostportString)
 
-	log.Fatal(http.ListenAndServe(hostportString, nil))
+	logrus.Fatal(http.ListenAndServe(hostportString, nil))
 }

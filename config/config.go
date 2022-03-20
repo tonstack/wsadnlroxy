@@ -11,14 +11,33 @@ import (
 )
 
 type MainConfig struct {
-	IP           string
-	Port         string
+	IP   string
+	Port string
+
 	ConnDeadline time.Duration
+
+	WSReadLimit        int64
+	WSReadBufferSize   int
+	WSWriteBufferSize  int
+	WSHandshakeTimeout time.Duration
+
+	TCPBufferSize int
 }
 
 var CFG MainConfig
 
 func Configure() {
+	CFG = MainConfig{
+		ConnDeadline: 30 * time.Second,
+
+		WSReadLimit:        16384,
+		WSReadBufferSize:   8192,
+		WSWriteBufferSize:  8192,
+		WSHandshakeTimeout: 1 * time.Second,
+
+		TCPBufferSize: 8192,
+	}
+
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
@@ -46,6 +65,7 @@ func Configure() {
 
 	isDebug := flag.Bool("debug", false, "")
 	flag.StringVar(&hostport, "host", "", "")
+
 	flag.Parse()
 
 	if *isDebug {
@@ -61,6 +81,4 @@ func Configure() {
 	if err != nil {
 		logrus.Fatal(err.Error())
 	}
-
-	CFG.ConnDeadline = 10 * time.Second
 }

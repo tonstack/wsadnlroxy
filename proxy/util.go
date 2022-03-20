@@ -2,14 +2,16 @@ package proxy
 
 import (
 	"net"
+	"wstcproxy/config"
 
 	"github.com/gorilla/websocket"
 )
 
 func readTcpBytes(conn net.Conn) ([]byte, error) {
-	buf := make([]byte, 1024)
+	buf := make([]byte, config.CFG.TCPBufferSize)
 
 	size, err := conn.Read(buf)
+
 	if err != nil {
 		return nil, err
 	}

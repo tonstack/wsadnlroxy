@@ -19,6 +19,7 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer wsconn.Close()
+	wsconn.SetReadLimit(config.CFG.WSReadLimit)
 
 	hostport := r.URL.Query().Get("dest_host")
 	if _, _, err = helper.SepIPPort(hostport); err != nil {
