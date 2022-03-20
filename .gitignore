@@ -1,7 +1,13 @@
+# ---- vscode
 .vscode/*
 .history/
 
+# ---- binary files
 main
 wstcproxy
 
+# ---- go work
 go.work
+
+# ---- tests
+test_tcp.py
