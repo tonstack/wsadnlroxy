@@ -1,5 +1,8 @@
 ## wstcproxy
 
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/tonstack/wstcproxy)
+[![GitHub license](https://img.shields.io/github/license/tonstack/wstcproxy)](https://github.com/tonstack/wstcproxy/blob/main/LICENSE)
+
 > :warning: **WARN:**: This isn't ready for production environment
 
 `WebSockets <==> TCP` Proxy
