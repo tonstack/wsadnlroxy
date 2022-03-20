@@ -11,7 +11,7 @@ Allows you to send messages via WebSockets, which will then be sent to the requi
 
 ### Connecting
 
-Create an active websocket connection to the proxy server, specify in the query parameters `dest_host` of the destination server that supports TCP. Например `?dest_host=127.0.0.1:2035`
+Create an active websocket connection to the proxy server, specify in the query parameters `dest_host` of the destination server that supports TCP. For example `?dest_host=127.0.0.1:2035`
 
 
 
