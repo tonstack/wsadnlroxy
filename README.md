@@ -34,7 +34,9 @@ wss://host:port/?ip={}&port={}&pubkey={}
 
 - `ip` – liteserver signed integer IP
 - `port` – liteserver unsigned integer TCP port
-- `pubkey` – liteserver base64 pubkey [(percent-encoding)](https://en.wikipedia.org/wiki/Percent-encoding)
+- `pubkey` – liteserver base64 public key [(percent-encoding)](https://en.wikipedia.org/wiki/Percent-encoding)
+
+note: public key information is used to check the connection to the liteserver. The proxy works transparently, all cryptography, which is associated with ADNL, must be on the client.
 
 ## License
 
