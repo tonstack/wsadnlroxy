@@ -1,13 +1,13 @@
-# ---- vscode
-.vscode/*
+.vscode/
 .history/
 
-# ---- binary files
 main
 wstcproxy
 
-# ---- go work
 go.work
 
-# ---- tests
-test_tcp.py
+data/certbot
+data/nginx/*
+!data/nginx/.gitkeep
+
+.env
