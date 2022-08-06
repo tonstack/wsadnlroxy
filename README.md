@@ -26,6 +26,16 @@ example.com. IN A xxx.xxx.xxx.xxx
 2. remove all containers `make docker-rm-all`
 3. run `make setup-wtih-ssl` or `make setup-no-ssl`
 
+## connection string
+
+```
+wss://host:port/?ip={}&port={}&pubkey={}
+```
+
+- `ip` – liteserver signed integer IP
+- `port` – liteserver unsigned integer TCP port
+- `pubkey` – liteserver base64 pubkey [(percent-encoding)](https://en.wikipedia.org/wiki/Percent-encoding)
+
 ## License
 
 The main license of this repository is `GNU GENERAL PUBLIC LICENSE Version 3`, but the repository contains an `init-ssl.sh` file its license is `MIT`.
