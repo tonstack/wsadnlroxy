@@ -1,1 +1,1 @@
-# wsadnlroxy (WebSockets <==> TCP(ADNL) Proxy)
+## wsadnlroxy (WebSockets <=> TCP[ADNL] Proxy)
