@@ -26,7 +26,10 @@ type liteServerConfig struct {
 func MainHandler(w http.ResponseWriter, r *http.Request) {
 	logrus.Debug("new client connected")
 
-	wsconn, err := upgrader.Upgrade(w, r, nil)
+	respHeader := make(http.Header)
+	respHeader.Add("Wsadnlroxy-Version", app.VERSION)
+
+	wsconn, err := upgrader.Upgrade(w, r, respHeader)
 	if err != nil {
 		return
 	}
