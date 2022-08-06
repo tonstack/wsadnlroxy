@@ -26,12 +26,12 @@ nginx-reload-no-ssl:
 
 # -------- setup --------
 setup-no-ssl:
-	make pass-nginx
+	make nginx-pass
 	$(COMPOSE) $(DOCKER_UP) app
 	$(COMPOSE) $(DOCKER_UP) nginx-no-ssl
 
 setup-wtih-ssl:
-	make pass-nginx
+	make nginx-pass
 	$(COMPOSE) $(DOCKER_UP) app
 	bash init-ssl.sh -d ${DOMAIN}
 
