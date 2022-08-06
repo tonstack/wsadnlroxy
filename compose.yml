@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  app:
+    restart: unless-stopped
+    container_name: wstcproxy
+    hostname: wstcproxy
+    build:
+      dockerfile: ./data/Dockerfile
+      target: app
+      context: .
+    env_file: [".env"]
+    networks: ["net_1"]
+    expose: ["${APP_PORT}"]
+
+  nginx-no-ssl:
+    image: nginx:latest
+    restart: unless-stopped
+    container_name: nginx-no-ssl
+    volumes: ["./data/nginx/app-no-ssl.conf:/etc/nginx/conf.d/app-no-ssl.conf"]
+    ports: ["${PROXY_PORT}:${PROXY_PORT}"]
+    networks: ["net_1"]
+
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    container_name: nginx
+    volumes:
+      - ./data/nginx/app.conf:/etc/nginx/conf.d/app.conf
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports: ["80:80", "${PROXY_PORT}:${PROXY_PORT}"]
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    networks: ["net_1"]
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    container_name: certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  net_1:
+    driver: bridge

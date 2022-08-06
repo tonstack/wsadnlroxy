@@ -1,18 +1,31 @@
-## wstcproxy
+## wsadnlroxy
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/tonstack/wstcproxy)
-[![GitHub license](https://img.shields.io/github/license/tonstack/wstcproxy)](https://github.com/tonstack/wstcproxy/blob/main/LICENSE)
+WebSockets <-> TCP(ADNL) Proxy
 
-> :warning: **WARN:**: This isn't ready for production environment
+## fast setup with ssl (ubuntu linux)
 
-`WebSockets <==> TCP` Proxy
+**Prerequisites**
+```text
+GNU bash 5.1 or newer
+GNU make 3.81 or newer
+docker 20.10.17 or newer
+docker-compose 1.29.2 or newer
+```
 
-Allows you to send messages via WebSockets, which will then be sent to the required TCP connection. This proxy was developed because of the inability to send a raw TCP packet from the browser, but you can use it for other tasks as well.
+1. create an `A` record for your domain
+```
+example.com. IN A xxx.xxx.xxx.xxx
+```
+2. create a `.env` file similar to `.env.example`
+3. pass your domain into `.env`
+2. run `make setup-wtih-ssl`
 
-### Connecting
+## how to upgrade
 
-Create an active websocket connection to the proxy server, specify in the query parameters `dest_host` of the destination server that supports TCP. For example `?dest_host=127.0.0.1:2035`
+1. run `git pull`
+2. remove all containers `make docker-rm-all`
+3. run `make setup-wtih-ssl` or `make setup-no-ssl`
 
+## License
 
-
-
+The main license of this repository is `GNU GENERAL PUBLIC LICENSE Version 3`, but the repository contains an `init-ssl.sh` file its license is `MIT`.

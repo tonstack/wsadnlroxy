@@ -1,14 +1,13 @@
-package proxy
+package utils
 
 import (
 	"net"
-	"wstcproxy/config"
 
 	"github.com/gorilla/websocket"
 )
 
-func readTcpBytes(conn net.Conn) ([]byte, error) {
-	buf := make([]byte, config.CFG.TCPBufferSize)
+func readTcpBytes(conn net.Conn, bufferSize int) ([]byte, error) {
+	buf := make([]byte, bufferSize)
 
 	size, err := conn.Read(buf)
 
@@ -19,7 +18,7 @@ func readTcpBytes(conn net.Conn) ([]byte, error) {
 	return buf[:size], nil
 }
 
-func chanFromWSConn(wsconn *websocket.Conn) chan []byte {
+func ChanFromWSConn(wsconn *websocket.Conn) chan []byte {
 	wsc := make(chan []byte)
 
 	go func() {
@@ -36,12 +35,12 @@ func chanFromWSConn(wsconn *websocket.Conn) chan []byte {
 	return wsc
 }
 
-func chanFromTCPConn(tcpconn net.Conn) chan []byte {
+func ChanFromTCPConn(tcpconn net.Conn, bufferSize int) chan []byte {
 	tcpc := make(chan []byte)
 
 	go func() {
 		for {
-			tcpmsg, err := readTcpBytes(tcpconn)
+			tcpmsg, err := readTcpBytes(tcpconn, bufferSize)
 			if err != nil {
 				tcpc <- nil
 				break
